@@ -13,6 +13,7 @@ import torch
 import gradio as gr
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from main.prompt import PromptOptimizer
+from main.refresh_button import refresh_with_message
 
 sys.path.insert(
     0, os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2]))
@@ -220,8 +221,7 @@ class VACEInference:
                     elem_classes='type_row',
                     elem_id='generate_button',
                     visible=True)
-            with gr.Column(scale=1):
-                self.refresh_button = gr.Button(value='\U0001f504')  # 🔄
+            
         #
         self.output_gallery = gr.Gallery(
             label="output_gallery",
@@ -229,6 +229,20 @@ class VACEInference:
             interactive=False,
             allow_preview=True,
             preview=True)
+
+        with gr.Row(equal_height=True):
+            with gr.Column(scale=1):
+                self.approve_button = gr.Button(
+                    value='✅ 確認保存', 
+                    elem_classes='type_row',
+                    elem_id='approve_button',
+                )
+            with gr.Column(scale=1):
+                self.refresh_button = gr.Button(
+                    value='🔄 重新生成', 
+                    elem_classes='type_row',
+                    elem_id='refresh_button',
+                )
 
     def generate(self, output_gallery, src_video, src_mask, src_ref_image_1,
                  src_ref_image_2, src_ref_image_3, prompt, negative_prompt,
@@ -303,16 +317,22 @@ class VACEInference:
             self.frame_rate, self.num_frames
         ]
         self.gen_outputs = [self.output_gallery]
+        
+        # 生成按鈕回調
         self.generate_button.click(
             self.generate,
             inputs=self.gen_inputs,
             outputs=self.gen_outputs,
             queue=True)
+        
+        # 刷新按鈕回調
         self.refresh_button.click(
             lambda x: self.gallery_share_data.get()
             if self.gallery_share else x,
             inputs=[self.output_gallery],
             outputs=[self.output_gallery])
+        
+        # 優化提示詞按鈕回調    
         self.optimize_prompt_btn.click(
             fn=self.optimize_prompt_callback,
             inputs=[self.prompt],
