@@ -135,11 +135,11 @@ class VACEInference:
                         lines=2)
                     self.optimize_prompt_btn = gr.Button(
                         value="優化提示詞",
-                        scale=0.15,
+                        scale=0.15, # type: ignore
                         )
                 self.negative_prompt = gr.Textbox(
                     show_label=False,
-                    value=self.pipe.config.sample_neg_prompt,
+                    value=self.pipe.config.sample_neg_prompt, # type: ignore
                     placeholder="negative_prompt_input",
                     elem_id='negative_prompt',
                     container=True,
@@ -195,22 +195,22 @@ class VACEInference:
             with gr.Row(equal_height=True):
                 self.output_height = gr.Textbox(
                     label='Output Height',
-                    value=480,
+                    value=480, # type: ignore
                     interactive=True,
                     info="輸出影片的高度 (像素)")
                 self.output_width = gr.Textbox(
                     label='Output Width',
-                    value=832,
+                    value=832, # type: ignore
                     interactive=True,
                     info="輸出影片的寬度 (像素)")
                 self.frame_rate = gr.Textbox(
                     label='Frame Rate',
-                    value=16,
+                    value=16, # type: ignore
                     interactive=True,
                     info="影片的每秒幀數 (FPS)")
                 self.num_frames = gr.Textbox(
                     label='Number of Frames',
-                    value=81,
+                    value=81, # type: ignore
                     interactive=True,
                     info="生成影片的總幀數")
         #
@@ -277,8 +277,8 @@ class VACEInference:
         name = '{0:%Y%m%d-%H%M%S}'.format(datetime.datetime.now())
         video_path = os.path.join(self.save_dir, f'cur_gallery_{name}.mp4')
         video_frames = (
-            torch.clamp(video / 2 + 0.5, min=0.0, max=1.0).permute(1, 2, 3, 0) *
-            255).cpu().numpy().astype(np.uint8)
+            torch.clamp(video / 2 + 0.5, min=0.0, max=1.0).permute(1, 2, 3, 0) * # type: ignore
+            255).cpu().numpy().astype(np.uint8) 
 
         try:
             writer = imageio.get_writer(
