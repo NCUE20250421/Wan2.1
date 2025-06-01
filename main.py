@@ -152,52 +152,66 @@ class VACEInference:
             with gr.Column(scale=1, min_width=0):
                 with gr.Row(equal_height=True):
                     self.shift_scale = gr.Slider(
-                        label='shift_scale',
+                        label='Shift Scale',
                         minimum=0.0,
                         maximum=100.0,
                         step=1.0,
                         value=16.0,
-                        interactive=True)
+                        interactive=True,
+                        info="控制移動幅度的參數，值越大移動越明顯 (建議值: 16.0)")
                     self.sample_steps = gr.Slider(
-                        label='sample_steps',
+                        label='Sampling Steps',
                         minimum=1,
                         maximum=100,
                         step=1,
                         value=25,
-                        interactive=True)
+                        interactive=True,
+                        info="生成時的採樣步數，步數越多品質越好但耗時更長 (建議值: 25)")
                     self.context_scale = gr.Slider(
-                        label='context_scale',
+                        label='Context Scale',
                         minimum=0.0,
                         maximum=2.0,
                         step=0.1,
                         value=1.0,
-                        interactive=True)
+                        interactive=True,
+                        info="控制上下文關聯性的參數，值越大關聯性越強 (建議值: 1.0)")
                     self.guide_scale = gr.Slider(
-                        label='guide_scale',
+                        label='Guidance Scale',
                         minimum=1,
                         maximum=10,
                         step=0.5,
                         value=5.0,
-                        interactive=True)
+                        interactive=True,
+                        info="提示詞引導強度，值越大越接近提示詞描述但可能影響品質 (建議值: 5.0)")
                     self.infer_seed = gr.Slider(
-                        minimum=-1, maximum=10000000, value=2025, label="Seed")
-        #
-        with gr.Accordion(label="Usable without source video", open=False):
+                        minimum=-1,
+                        maximum=10000000,
+                        value=2025,
+                        label="Seed",
+                        info="隨機種子數，相同的種子會產生相同的結果，-1為隨機")
+
+        with gr.Accordion(label="Advanced Settings", open=False):
             with gr.Row(equal_height=True):
                 self.output_height = gr.Textbox(
-                    label='resolutions_height',
+                    label='Output Height',
                     value=480,
-                    # value=720,
-                    interactive=True)
+                    interactive=True,
+                    info="輸出影片的高度 (像素)")
                 self.output_width = gr.Textbox(
-                    label='resolutions_width',
+                    label='Output Width',
                     value=832,
-                    # value=1280,
-                    interactive=True)
+                    interactive=True,
+                    info="輸出影片的寬度 (像素)")
                 self.frame_rate = gr.Textbox(
-                    label='frame_rate', value=16, interactive=True)
+                    label='Frame Rate',
+                    value=16,
+                    interactive=True,
+                    info="影片的每秒幀數 (FPS)")
                 self.num_frames = gr.Textbox(
-                    label='num_frames', value=81, interactive=True)
+                    label='Number of Frames',
+                    value=81,
+                    interactive=True,
+                    info="生成影片的總幀數")
         #
         with gr.Row(equal_height=True):
             with gr.Column(scale=5):
