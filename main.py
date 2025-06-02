@@ -299,6 +299,8 @@ class VACEInference:
             return [video_path]
 
     def optimize_prompt_callback(self, prompt, src_ref_image_1, src_ref_image_2, src_ref_image_3):
+        print("Optimize prompt callback triggered")  # 調試輸出
+        print(f"Input images: {src_ref_image_1}, {src_ref_image_2}, {src_ref_image_3}")  # 檢查輸入
         image_inputs = {
             'src_ref_image_1': src_ref_image_1,
             'src_ref_image_2': src_ref_image_2,
@@ -351,6 +353,7 @@ class VACEInference:
         
         # 優化提示詞按鈕回調    
         self.initial_prompt_btn.click(
+            fn=self.optimize_prompt_callback,  # 添加回調函數
             inputs=[
                 self.prompt,
                 self.src_ref_image_1,
