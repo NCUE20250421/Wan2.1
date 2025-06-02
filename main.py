@@ -12,8 +12,7 @@ import torch
 
 import gradio as gr
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from main.prompt import PromptOptimizer
-from main.refresh_button import refresh_with_message
+from main.prompt_optimizer import PromptOptimizer
 
 sys.path.insert(
     0, os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2]))
@@ -165,9 +164,9 @@ class VACEInference:
                         minimum=1,
                         maximum=100,
                         step=1,
-                        value=25,
+                        value=20,
                         interactive=True,
-                        info="生成時的採樣步數，步數越多品質越好但耗時更長 (建議值: 25)")
+                        info="生成時的採樣步數，步數越多品質越好但耗時更長 (建議值: 20)")
                     self.context_scale = gr.Slider(
                         label='Context Scale',
                         minimum=0.0,
