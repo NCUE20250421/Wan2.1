@@ -12,7 +12,7 @@ import torch
 
 import gradio as gr
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from main.prompt_optimizer import PromptOptimizer
+from main.prompt_initial import PromptInitial
 
 sys.path.insert(
     0, os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2]))
@@ -22,7 +22,7 @@ from wan.configs import SIZE_CONFIGS, WAN_CONFIGS
 
 
 class FixedSizeQueue:
-
+    
     def __init__(self, max_size):
         self.max_size = max_size
         self.queue = []
@@ -68,7 +68,6 @@ class VACEInference:
                     use_usp=True,
                     ulysses_size=cfg.ulysses_size,
                     ring_size=cfg.ring_size)
-        self.prompt_optimizer = PromptOptimizer()
 
     def create_ui(self, *args, **kwargs):
         gr.Markdown("""
@@ -132,7 +131,7 @@ class VACEInference:
                         elem_classes='type_row',
                         visible=True,
                         lines=2)
-                    self.optimize_prompt_btn = gr.Button(
+                    self.initial_prompt_btn = gr.Button(
                         value="優化提示詞",
                         scale=0.15, # type: ignore
                         )
@@ -274,7 +273,7 @@ class VACEInference:
             offload_model=True)
 
         name = '{0:%Y%m%d-%H%M%S}'.format(datetime.datetime.now())
-        video_path = os.path.join(self.save_dir, f'cur_gallery_{name}.mp4')
+        video_path = os.path.join(self.save_dir, f'gallery_{name}.mp4')
         video_frames = (
             torch.clamp(video / 2 + 0.5, min=0.0, max=1.0).permute(1, 2, 3, 0) * # type: ignore
             255).cpu().numpy().astype(np.uint8) 
@@ -299,12 +298,31 @@ class VACEInference:
         else:
             return [video_path]
 
-    def optimize_prompt_callback(self, prompt):
-        """優化提示詞的回調函數"""
-        if not prompt:
-            return ""
-        optimized = self.prompt_optimizer.optimize_prompt(prompt)
-        return optimized
+    def optimize_prompt_callback(self, prompt, src_ref_image_1, src_ref_image_2, src_ref_image_3):
+        image_inputs = {
+            'src_ref_image_1': src_ref_image_1,
+            'src_ref_image_2': src_ref_image_2,
+            'src_ref_image_3': src_ref_image_3
+        }
+        # Filter out None images
+        available_images = {label: path for label, path in image_inputs.items() if path is not None}
+        if not available_images:
+            return prompt if prompt else "無圖片輸入，請上傳至少一張參考圖片。"
+        
+        # Generate prompts for each available image
+        prompts = []
+        for label, image_path in available_images.items():
+            try:
+                description = PromptInitial(image_path)
+                prompts.append(f"{label}: {description}")
+            except Exception as e:
+                prompts.append(f"{label}: 無法分析圖片，錯誤: {str(e)}")
+        
+        # Combine prompts or use existing prompt if no new descriptions
+        result_prompt = "\n".join(prompts) if prompts else prompt
+        return result_prompt if result_prompt else "無法生成提示詞，請檢查圖片輸入。"
+        
+        
 
     def set_callbacks(self, **kwargs):
         self.gen_inputs = [
@@ -332,11 +350,15 @@ class VACEInference:
             outputs=[self.output_gallery])
         
         # 優化提示詞按鈕回調    
-        self.optimize_prompt_btn.click(
-            fn=self.optimize_prompt_callback,
-            inputs=[self.prompt],
+        self.initial_prompt_btn.click(
+            inputs=[
+                self.prompt,
+                self.src_ref_image_1,
+                self.src_ref_image_2,
+                self.src_ref_image_3
+            ],
             outputs=[self.prompt],
-            queue=False)
+            queue=True)
 
 
 if __name__ == '__main__':
