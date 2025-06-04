@@ -13,6 +13,7 @@ import torch
 import gradio as gr
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from main.prompt_initial import PromptInitial
+from main.prompt_optimize import PromptOptimize
 
 sys.path.insert(
     0, os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2]))
@@ -133,9 +134,11 @@ class VACEInference:
                         lines=2)
                     self.initial_prompt_btn = gr.Button(
                         value="初始化提示詞",
+                        scale=0.15, # type: ignore
                         )
                     self.optimize_prompt_btn = gr.Button(
                         value="優化提示詞",
+                        scale=0.15, # type: ignore
                         )
                 self.negative_prompt = gr.Textbox(
                     show_label=False,
@@ -300,7 +303,7 @@ class VACEInference:
         else:
             return [video_path]
 
-    def optimize_prompt_callback(self, prompt, src_ref_image_1, src_ref_image_2, src_ref_image_3):
+    def initial_prompt_callback(self, prompt, src_ref_image_1, src_ref_image_2, src_ref_image_3):
         image_inputs = {
             'src_ref_image_1': src_ref_image_1,
             'src_ref_image_2': src_ref_image_2,
@@ -324,7 +327,16 @@ class VACEInference:
         result_prompt = "\n".join(prompts) if prompts else prompt
         return result_prompt if result_prompt else "無法生成提示詞，請檢查圖片輸入。"
         
-        
+    def optimize_prompt_callback(self, prompt):
+        if not prompt:
+            return "無提示詞輸入，請上傳提示詞。"
+            
+        try:
+            # Send prompt to optimize_prompt function
+            optimized_prompt = PromptOptimize(prompt)
+            return optimized_prompt
+        except Exception as e:
+            return f"無法生成提示詞: {str(e)}"    
 
     def set_callbacks(self, **kwargs):
         self.gen_inputs = [
@@ -351,15 +363,22 @@ class VACEInference:
             inputs=[self.output_gallery],
             outputs=[self.output_gallery])
         
-        # 優化提示詞按鈕回調    
+        # 初始化提示詞按鈕回調    
         self.initial_prompt_btn.click(
-            fn=self.optimize_prompt_callback,  # 添加回調函數
+            fn=self.initial_prompt_callback,  # 添加回調函數
             inputs=[
                 self.prompt,
                 self.src_ref_image_1,
                 self.src_ref_image_2,
                 self.src_ref_image_3
             ],
+            outputs=[self.prompt],
+            queue=True)
+        
+        # 優化提示詞按鈕回調
+        self.optimize_prompt_btn.click(
+            fn=self.optimize_prompt_callback,
+            inputs=[self.prompt],
             outputs=[self.prompt],
             queue=True)
 
