@@ -132,8 +132,10 @@ class VACEInference:
                         visible=True,
                         lines=2)
                     self.initial_prompt_btn = gr.Button(
+                        value="初始化提示詞",
+                        )
+                    self.optimize_prompt_btn = gr.Button(
                         value="優化提示詞",
-                        scale=0.15, # type: ignore
                         )
                 self.negative_prompt = gr.Textbox(
                     show_label=False,
@@ -299,8 +301,6 @@ class VACEInference:
             return [video_path]
 
     def optimize_prompt_callback(self, prompt, src_ref_image_1, src_ref_image_2, src_ref_image_3):
-        print("Optimize prompt callback triggered")  # 調試輸出
-        print(f"Input images: {src_ref_image_1}, {src_ref_image_2}, {src_ref_image_3}")  # 檢查輸入
         image_inputs = {
             'src_ref_image_1': src_ref_image_1,
             'src_ref_image_2': src_ref_image_2,
