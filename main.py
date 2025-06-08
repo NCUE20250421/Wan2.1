@@ -444,4 +444,7 @@ if __name__ == '__main__':
             root_path=args.root_path,
             allowed_paths=allowed_paths,
             show_error=True,
-            debug=True)
+            debug=True,
+            share=True)
+        
+
