@@ -208,12 +208,12 @@ class VACEInference:
                     info="輸出影片的寬度 (像素)")
                 self.frame_rate = gr.Textbox(
                     label='Frame Rate',
-                    value=24, # type: ignore
+                    value=16, # type: ignore 16
                     interactive=True,
                     info="影片的每秒幀數 (FPS)")
                 self.num_frames = gr.Textbox(
                     label='Number of Frames',
-                    value=240, # type: ignore
+                    value=81, # type: ignore 81
                     interactive=True,
                     info="生成影片的總幀數")
         #
