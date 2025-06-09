@@ -14,6 +14,7 @@ import gradio as gr
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from main.prompt_initial import PromptInitial
 from main.prompt_optimize import PromptOptimize
+from main.refresh_button import refresh_btn
 
 sys.path.insert(
     0, os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2]))
@@ -358,10 +359,16 @@ class VACEInference:
         
         # 刷新按鈕回調
         self.refresh_button.click(
-            lambda x: self.gallery_share_data.get()
-            if self.gallery_share else x,
-            inputs=[self.output_gallery],
-            outputs=[self.output_gallery])
+            fn=refresh_btn,
+            inputs=[],  # 移除輸入
+            outputs=[self.output_gallery],
+            show_progress='hidden',
+        ).then(
+            fn=self.generate,
+            inputs=self.gen_inputs,
+            outputs=self.gen_outputs,
+            queue=True
+        )
         
         # 初始化提示詞按鈕回調    
         self.initial_prompt_btn.click(
@@ -446,5 +453,5 @@ if __name__ == '__main__':
             show_error=True,
             debug=True,
             share=True)
-        
+
 
