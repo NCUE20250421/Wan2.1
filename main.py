@@ -237,7 +237,7 @@ class VACEInference:
         with gr.Row(equal_height=True):
             with gr.Column(scale=1):
                 self.approve_button = gr.Button(
-                    value='✅ 確認保存', 
+                    value='✅ 儲存當前片段', 
                     elem_classes='type_row',
                     elem_id='approve_button',
                 )
@@ -249,10 +249,10 @@ class VACEInference:
                 )
                 
         with gr.Column(scale=1):
-                self.approve_button = gr.Button(
-                    value='匯出', 
+                self.export_button = gr.Button(
+                    value='📤 匯出完整影片', 
                     elem_classes='type_row',
-                    elem_id='approve_button',
+                    elem_id='export_button',
                 )
 
     def generate(self, output_gallery, src_video, src_mask, src_ref_image_1,
