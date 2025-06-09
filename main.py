@@ -243,7 +243,7 @@ class VACEInference:
                 )
             with gr.Column(scale=1):
                 self.refresh_button = gr.Button(
-                    value='🔄 重新生成', 
+                    value='🔄 重新生成片段', 
                     elem_classes='type_row',
                     elem_id='refresh_button',
                 )
