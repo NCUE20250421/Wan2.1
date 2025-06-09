@@ -247,6 +247,13 @@ class VACEInference:
                     elem_classes='type_row',
                     elem_id='refresh_button',
                 )
+                
+        with gr.Column(scale=1):
+                self.approve_button = gr.Button(
+                    value='匯出', 
+                    elem_classes='type_row',
+                    elem_id='approve_button',
+                )
 
     def generate(self, output_gallery, src_video, src_mask, src_ref_image_1,
                  src_ref_image_2, src_ref_image_3, prompt, negative_prompt,
