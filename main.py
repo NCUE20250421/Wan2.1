@@ -409,8 +409,8 @@ class VACEInference:
         # 匯出完整影片按鈕回調
         self.export_button.click(
             fn=export_btn,
-            inputs=[],
-            outputs=[],
+            inputs=[],  # 不需要輸入參數
+            outputs=[], # 不需要輸出
             queue=True
         )
 
