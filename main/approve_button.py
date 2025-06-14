@@ -11,7 +11,7 @@ save_dir = os.path.join(base_dir, 'cache', 'video_clips')
 
 def approve_btn(current_clip_path):
     """
-    將當前片段路徑加入片段列表並移動到正確的儲存位置
+    將當前片段路徑加入片段列表並移動到正確的儲存位置，並清理臨時檔案
     :param current_clip_path: 當前生成的影片片段路徑 (str or tuple)
     :return: None
     """
@@ -38,6 +38,17 @@ def approve_btn(current_clip_path):
             try:
                 # 複製檔案到正確的位置
                 shutil.copy2(temp_path, new_path)
+                
+                # 刪除原始檔案
+                os.remove(temp_path)
+                
+                # 嘗試刪除臨時資料夾
+                temp_dir = os.path.dirname(temp_path)
+                try:
+                    shutil.rmtree(temp_dir)
+                except Exception:
+                    # 如果資料夾還有其他檔案或無法刪除，則忽略錯誤
+                    pass
                 
                 # 只有成功複製後才加入列表
                 if new_path not in saved_clips:

@@ -3,6 +3,7 @@ import shutil
 import gradio as gr
 from moviepy.editor import concatenate_videoclips, VideoFileClip
 from main.approve_button import saved_clips
+import datetime
 
 def export_btn():
     """
@@ -18,8 +19,9 @@ def export_btn():
         output_dir = os.path.join(os.getcwd(), "output")
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-            
-        output_path = os.path.join(output_dir, "final_video.mp4")
+        
+        name = '{0:%Y%m%d-%H%M%S}'.format(datetime.datetime.now())    
+        output_path = os.path.join(output_dir, "gallery_{name}.mp4")
         
         # 驗證並載入影片片段
         valid_clips = []
