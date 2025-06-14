@@ -5,7 +5,7 @@ from main.approve_button import saved_clips
 
 def export_btn():
     """
-    將所有已儲存片段依序串接並匯出為完整影片
+    將所有已儲存片段依序串接並匯出為完整影片，完成後清除暫存的影片檔案
     :return: None
     """
     if not saved_clips:
@@ -57,11 +57,24 @@ def export_btn():
             c.close()
         final_clip.close()
         
+        # 清除暫存的影片檔案
+        for path in saved_clips:
+            try:
+                if os.path.exists(path):
+                    os.remove(path)
+                    print(f"已刪除暫存檔案: {path}")
+            except Exception as e:
+                print(f"刪除檔案失敗 {path}: {str(e)}")
+                continue
+        
+        # 清空 saved_clips 列表
+        saved_clips.clear()
+        
         total_duration = len(valid_clips) * 5  # 每個片段 5 秒
         gr.Warning(
             message=f"影片已成功匯出到: {output_path}\n"
                    f"合併了 {len(valid_clips)} 個片段\n"
-                   f"總時長: {total_duration} 秒",
+                   f"總時長: {total_duration} 秒\n",
             duration=15
         )
         

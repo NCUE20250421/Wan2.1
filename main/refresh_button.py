@@ -8,6 +8,6 @@ def refresh_btn(output_gallery):
     empty_gallery = []
     
     # 顯示提示信息
-    gr.Warning(message="更新提示詞效果更好")
+    gr.Warning(message="生成影片效果不佳? 更新提示詞效果更好")
     
     return [] #, gr.Warning(message="更新提示詞效果更好")
