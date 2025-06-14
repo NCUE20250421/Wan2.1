@@ -15,6 +15,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from main.prompt_initial import PromptInitial
 from main.prompt_optimize import PromptOptimize
 from main.refresh_button import refresh_btn
+from main.approve_button import approve_btn
+from main.export_button import export_btn
 
 sys.path.insert(
     0, os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-2]))
@@ -395,6 +397,22 @@ class VACEInference:
             inputs=[self.prompt],
             outputs=[self.prompt],
             queue=True)
+        
+        # 儲存片段按鈕回調
+        self.approve_button.click(
+            fn=lambda gallery: approve_btn(gallery[0] if gallery else None),
+            inputs=[self.output_gallery],
+            outputs=[],
+            queue=True
+        )
+
+        # 匯出完整影片按鈕回調
+        self.export_button.click(
+            fn=export_btn,
+            inputs=[],
+            outputs=[],
+            queue=True
+        )
 
 
 if __name__ == '__main__':
