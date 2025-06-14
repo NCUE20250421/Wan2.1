@@ -1,4 +1,5 @@
 import os
+import shutil
 import gradio as gr
 from moviepy.editor import concatenate_videoclips, VideoFileClip
 from main.approve_button import saved_clips
@@ -66,6 +67,17 @@ def export_btn():
             except Exception as e:
                 print(f"刪除檔案失敗 {path}: {str(e)}")
                 continue
+        
+        # 清除 cache 目錄
+        cache_dir = os.path.join(os.getcwd(), "cache")
+        if os.path.exists(cache_dir):
+            try:
+                shutil.rmtree(cache_dir)
+                print("已清除 cache 目錄")
+                # 重新創建空的 cache 目錄
+                os.makedirs(cache_dir)
+            except Exception as e:
+                print(f"清除 cache 目錄失敗: {str(e)}")
         
         # 清空 saved_clips 列表
         saved_clips.clear()

@@ -360,22 +360,16 @@ class VACEInference:
         self.gen_outputs = [self.output_gallery]
         
         # 生成按鈕回調
-        # self.generate_button.click(
-        #     self.generate,
-        #     inputs=self.gen_inputs,
-        #     outputs=self.gen_outputs,
-        #     queue=True)
         self.generate_button.click(
-            fn=refresh_btn,
-            inputs=[],  # 移除輸入
+            fn=lambda: [], # Clear gallery first
+            inputs=None,
             outputs=[self.output_gallery],
-            show_progress='hidden',
+            queue=False
         ).then(
-            fn=self.generate,
+            self.generate,
             inputs=self.gen_inputs,
             outputs=self.gen_outputs,
-            queue=True
-        )
+            queue=True)
         
         # 刷新按鈕回調
         self.refresh_button.click(
