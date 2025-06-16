@@ -2,17 +2,36 @@ import os
 import shutil
 import gradio as gr
 from moviepy.editor import concatenate_videoclips, VideoFileClip
-from main.approve_button import saved_clips
 import datetime
 
 def export_btn():
     """
-    將所有已儲存片段依序串接並匯出為完整影片，完成後清除暫存的影片檔案
+    將 cache/video_clips 目錄中的所有影片依序串接並匯出為完整影片，完成後清除暫存的影片檔案
     :return: None
     """
-    if not saved_clips:
-        gr.Warning(message="沒有可匯出的片段，請先儲存片段。")
+    # 設定 video_clips 目錄路徑
+    video_clips_dir = os.path.join(os.getcwd(), "cache", "video_clips")
+    
+    if not os.path.exists(video_clips_dir):
+        gr.Warning(message="找不到 video_clips 目錄，請先儲存片段。")
         return None
+    
+    # 獲取目錄中的所有 mp4 檔案
+    video_files = []
+    try:
+        for filename in os.listdir(video_clips_dir):
+            if filename.lower().endswith('.mp4'):
+                video_files.append(os.path.join(video_clips_dir, filename))
+    except Exception as e:
+        gr.Warning(message=f"讀取 video_clips 目錄失敗: {str(e)}")
+        return None
+    
+    if not video_files:
+        gr.Warning(message="video_clips 目錄中沒有找到任何影片檔案，請先儲存片段。")
+        return None
+    
+    # 按檔名排序，確保順序正確
+    video_files.sort()
 
     try:
         # 設定輸出路徑
@@ -25,11 +44,12 @@ def export_btn():
         
         # 驗證並載入影片片段
         valid_clips = []
-        for path in saved_clips:
+        for path in video_files:
             try:
                 if os.path.exists(path):
                     clip = VideoFileClip(path)
                     valid_clips.append(clip)
+                    print(f"載入影片: {os.path.basename(path)}")
                 else:
                     print(f"找不到影片檔案: {path}")
             except Exception as e:
@@ -60,35 +80,29 @@ def export_btn():
             c.close()
         final_clip.close()
         
-        # 清除暫存的影片檔案
-        for path in saved_clips:
+        # 清除 video_clips 目錄中的檔案
+        for path in video_files:
             try:
                 if os.path.exists(path):
                     os.remove(path)
-                    print(f"已刪除暫存檔案: {path}")
+                    print(f"已刪除暫存檔案: {os.path.basename(path)}")
             except Exception as e:
                 print(f"刪除檔案失敗 {path}: {str(e)}")
                 continue
         
-        # 清除 cache 目錄
-        cache_dir = os.path.join(os.getcwd(), "cache")
-        if os.path.exists(cache_dir):
-            try:
-                shutil.rmtree(cache_dir)
-                print("已清除 cache 目錄")
-                # 重新創建空的 cache 目錄
-                os.makedirs(cache_dir)
-            except Exception as e:
-                print(f"清除 cache 目錄失敗: {str(e)}")
+        # 如果 video_clips 目錄為空，可以選擇刪除該目錄
+        try:
+            if not os.listdir(video_clips_dir):
+                os.rmdir(video_clips_dir)
+                print("已刪除空的 video_clips 目錄")
+        except Exception as e:
+            print(f"刪除 video_clips 目錄失敗: {str(e)}")
         
-        # 清空 saved_clips 列表
-        saved_clips.clear()
-        
-        total_duration = len(valid_clips) * 5  # 每個片段 5 秒
+        total_duration = len(valid_clips) * 5  # 每個片段 5 秒（根據實際情況調整）
         gr.Warning(
             message=f"影片已成功匯出到: {output_path}\n"
                    f"合併了 {len(valid_clips)} 個片段\n"
-                   f"總時長: {total_duration} 秒\n",
+                   f"總時長: 約 {total_duration} 秒\n",
             duration=15
         )
         
