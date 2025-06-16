@@ -21,7 +21,7 @@ def export_btn():
             os.makedirs(output_dir)
         
         name = '{0:%Y%m%d-%H%M%S}'.format(datetime.datetime.now())    
-        output_path = os.path.join(output_dir, "gallery_{name}.mp4")
+        output_path = os.path.join(output_dir, f"gallery_{name}.mp4")
         
         # 驗證並載入影片片段
         valid_clips = []
