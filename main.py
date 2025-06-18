@@ -76,7 +76,7 @@ class VACEInference:
     def create_ui(self, *args, **kwargs):
         gr.Markdown("""
                     <div style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 15px;">
-                        <a href="https://ali-vilab.github.io/VACE-Page/" style="text-decoration: none; color: inherit;">帶貨直播 Demo</a>
+                        <a href="https://ali-vilab.github.io/VACE-Page/" style="text-decoration: none; color: inherit;">Demo</a>
                     </div>
                     """)
         with gr.Row(variant='panel', equal_height=True):
